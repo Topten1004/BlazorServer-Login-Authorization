@@ -1,0 +1,67 @@
+﻿@page "/"
+@using BlazorBaseApp.Data;
+@using BlazorBaseApp.Services;
+@using Model
+@using Newtonsoft.Json;
+@using Repositories.Interfaces
+@using System
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Components;
+@inject IPersonRepository PersonReporistory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime _jsRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationService AuthenticationService
+
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-info mb-3 ml-3">Please Login</h3>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" @bind-value="sUsername" class="form-control"></input>                        
+                    </div>
+                     <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Password" @bind-value="sPassword" class="form-control"></input>                        
+                    </div>                
+                     <div class="form-group">
+                        <button class="btn btn-primary" @onclick="TestLogin">Test Login</button>
+                        
+                    </div>
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string sUsername { get; set; } = "";
+
+    private string sPassword { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    private async Task TestLogin()
+    {
+        var CreatedResult = await PersonReporistory.GetPerson(sUsername, sPassword);
+        if (CreatedResult != null)
+        {
+
+            AuthenticationService.Login(CreatedResult);
+
+            NavigationManager.NavigateTo("/dashboard");
+
+            await _jsRuntime.InvokeVoidAsync("ShowToastr", "success", "Login Success");
+        }
+        else
+        {
+            await _jsRuntime.InvokeVoidAsync("ShowToastr", "error", "User Created!");
+        }
+    }
+}

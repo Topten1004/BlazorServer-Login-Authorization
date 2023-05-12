@@ -1,0 +1,88 @@
+﻿@page "/Register"
+@using Model
+@using Repositories.Interfaces
+@using Microsoft.EntityFrameworkCore
+@inject IPersonRepository PersonReporistory
+@inject IJSRuntime _jsRuntime
+
+
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-info mb-3 ml-3">@sPageTitle User</h3>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@_PersonModel" OnValidSubmit="@HandlePersonUpsert">
+                    <DataAnnotationsValidator/>
+                    @* <ValidationSummary/>*@
+                    <div class="form-group">
+                        <label>Name</label>
+                        <InputText @bind-Value="_PersonModel.Name" class="form-control"></InputText>
+                        
+                    </div>
+                     <div class="form-group">
+                        <label>Surname</label>
+                        <InputText @bind-Value="_PersonModel.Surname" class="form-control"></InputText>
+                        
+                    </div>
+                     <div class="form-group">
+                        <label>Username</label>
+                        <InputText @bind-Value="_PersonModel.UserName" class="form-control"></InputText>
+                        
+                    </div>
+                     <div class="form-group">
+                        <label>Password</label>
+                        <InputText type="password" placeholder="Password" @bind-Value="_PersonModel.Password" class="form-control"></InputText>
+                         
+                    </div>
+                     <div class="form-group">
+                        <label>Confirm Password</label>
+                        <InputText type="password" placeholder="ConfirmPassword" @bind-Value="sPasswordConfirm" class="form-control"></InputText>
+                         
+                    </div>
+
+                    <div class="form-group">
+                        <label for="roleSelect">Select Role:</label>
+                        <select id="roleSelect" @bind="_PersonModel.Role">
+                            <option value="">Select a role...</option>
+                            @foreach (var role in Roles)
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary">@sPageTitle User</button>
+                        <NavLink href="/" class="btn btn-secondary">Home</NavLink>
+                    </div>
+                </EditForm>   
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+
+    private string sPageTitle { get; set; } = "Register";
+    private PersonModel _PersonModel { get; set; } = new PersonModel();
+    private string sPasswordConfirm { get; set; }
+
+    private List<string> Roles { get; set; } = new List<string>();
+    string SelectedRole;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Roles.Add("Admin");
+        Roles.Add("Moderator");
+        Roles.Add("Officer");
+    }
+    private async Task HandlePersonUpsert()
+    {
+        var CreatedResult = await PersonReporistory.CreatePerson(_PersonModel);
+        await _jsRuntime.InvokeVoidAsync("ShowToastr","success","User Created!");
+    }
+}
