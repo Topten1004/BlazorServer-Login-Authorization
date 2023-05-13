@@ -1,10 +1,25 @@
 ﻿@page "/one"
 @using BlazorBaseApp.Model
+@using BlazorBaseApp.Services;
 @using Newtonsoft.Json
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationService AuthenticationService
 
-<h1>Page1</h1>
-
+@if (AuthenticationService.IsLoggedIn == true)
+{
+    @if (AuthenticationService.LoggedInUser.Role == "Admin" || AuthenticationService.LoggedInUser.Role == "Moderator")
+    {
+        <PageTitle>Page One</PageTitle>
+    }
+    else
+    {
+        <PageTitle>Permission is denied</PageTitle>
+    }
+}
+else
+{
+    <h1>You must login</h1>
+}
 @code {
     
 }

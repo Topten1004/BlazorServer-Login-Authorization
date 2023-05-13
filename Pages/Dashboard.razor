@@ -1,5 +1,18 @@
 ﻿@page "/dashboard"
+@using BlazorBaseApp.Model
+@using BlazorBaseApp.Services;
+@using Newtonsoft.Json
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationService AuthenticationService
 
-<PageTitle>Dashboard</PageTitle>
+@if (AuthenticationService.IsLoggedIn == true)
+{
+    <PageTitle>Dashboard</PageTitle>
+}
+else
+{
+    <h1>You must login</h1>
+}
+@code {
 
-<h1>Dashboard</h1>
+}
