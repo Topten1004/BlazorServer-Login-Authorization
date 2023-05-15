@@ -7,7 +7,6 @@
 
 @if (AuthenticationService.IsLoggedIn == true)
 {
-    @if (AuthenticationService.LoggedInUser.Role == "Admin" || AuthenticationService.LoggedInUser.Role == "Moderator")
     <PageTitle>Page Two</PageTitle>
 }
 else
